@@ -6,15 +6,19 @@ import (
 	"net/http"
 
 	"github.com/gin-gonic/gin"
+	"github.com/jmoiron/sqlx"
 )
 
-func InitRouter() *gin.Engine {
+func InitRouter(db *sqlx.DB) *gin.Engine {
 	router := gin.Default()
 
 	// buat masing-masing route
 	router.GET("/", func(ctx *gin.Context) {
 		ctx.String(http.StatusOK, "Halo Dunia...") // mengirimkan response dalam bentuk string
 	})
+
+	// route auth
+	InitAuthRouter(router, db)
 
 	return router
 }

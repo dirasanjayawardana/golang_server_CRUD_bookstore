@@ -11,14 +11,14 @@ import (
 func main() {
 
 	// Inisialisasi Database (install sqlx dan driver go sql driverr)
-	_, error := pkg.InitMySql()
+	db, error := pkg.InitMySql()
 	if error != nil {
 		log.Fatal(error) // log.Fatal --> ketika terjadi error akan langsung memberhentikan program
 		// return
 	}
 
 	// Inisialisasi Router
-	router := routes.InitRouter()
+	router := routes.InitRouter(db)
 
 	// Inisialisasi Server
 	server := pkg.InitServer(router)
