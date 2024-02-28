@@ -19,6 +19,7 @@ func InitRouter(db *sqlx.DB) *gin.Engine {
 
 	// route auth
 	InitAuthRouter(router, db)
+	InitBookRouter(router, db)
 
 	return router
 }

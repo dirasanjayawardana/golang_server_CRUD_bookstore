@@ -19,7 +19,7 @@ func InitAuthRepo(db *sqlx.DB) *AuthRepo {
 func (item *AuthRepo) FindByEmail(body models.AuthModel) ([]models.AuthModel, error) {
 	query := "SELECT * FROM users WHERE email = ?"
 	result := []models.AuthModel{}
-	// .select akan mereturnkan hasil
+	// .select akan mereturnkan hasil dari query
 	if err := item.Select(&result, query, body.Email); err != nil {
 		return nil, err
 	}
@@ -29,6 +29,7 @@ func (item *AuthRepo) FindByEmail(body models.AuthModel) ([]models.AuthModel, er
 
 func (item *AuthRepo) SaveUser(body models.AuthModel) error {
 	query := "INSERT INTO users (email, password) VALUES (?, ?)"
+	// .exce --> tidak mereturn rows (data dari database)
 	if _, err := item.Exec(query, body.Email, body.Password); err != nil {
 		return err
 	}

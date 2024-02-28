@@ -32,7 +32,7 @@ func (item *Payload) CreateToken() (string, error) {
 	return result, nil
 }
 
-func (item *Payload) VerifyToken(token string) (*Payload, error) {
+func VerifyToken(token string) (*Payload, error) {
 	jwtSecret := os.Getenv("JWT_SECRET")
 	parsedToken, err := jwt.ParseWithClaims(token, &Payload{}, func(t *jwt.Token) (interface{}, error) {
 		// interface{} sama dengan any

@@ -21,6 +21,7 @@ func InitAuthHandler(item *repositories.AuthRepo) *AuthHandler {
 	return &AuthHandler{item}
 }
 
+// ctx *gin.Context --> untuk mengambil request dan memberi response
 func (item *AuthHandler) Register(ctx *gin.Context) {
 
 	// ambil body,konversi dari json atau form ke struct
@@ -79,6 +80,7 @@ func (item *AuthHandler) Register(ctx *gin.Context) {
 
 }
 
+// ctx *gin.Context --> untuk mengambil request dan memberi response
 func (item *AuthHandler) Login(ctx *gin.Context) {
 
 	// ambil body,konversi dari json atau form ke struct
