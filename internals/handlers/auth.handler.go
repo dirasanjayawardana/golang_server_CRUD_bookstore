@@ -5,6 +5,7 @@ package handlers
 import (
 	"golang_server_bookstore/internals/models"
 	"golang_server_bookstore/internals/repositories"
+	"golang_server_bookstore/pkg"
 	"log"
 	"net/http"
 
@@ -71,7 +72,7 @@ func (item *AuthHandler) Register(ctx *gin.Context) {
 		return
 	}
 
-	 // kirim response dalam bentuk json, gin.H untuk membuat map dengan key string & vlaue any
+	// kirim response dalam bentuk json, gin.H untuk membuat map dengan key string & vlaue any
 	ctx.JSON(http.StatusCreated, gin.H{
 		"messages": "success register",
 	})
@@ -80,4 +81,62 @@ func (item *AuthHandler) Register(ctx *gin.Context) {
 
 func (item *AuthHandler) Login(ctx *gin.Context) {
 
+	// ambil body,konversi dari json atau form ke struct
+	body := models.AuthModel{}
+	if err := ctx.ShouldBind(&body); err != nil {
+		log.Println(err.Error())
+		ctx.JSON(http.StatusInternalServerError, gin.H{
+			"error": err.Error(),
+		}) // kirim response dalam bentuk json, gin.H untuk membuat map dengan key string & vlaue any
+		return
+	}
+
+	// cek apakah email terdaftar
+	result, err := item.FindByEmail(body)
+	if err != nil {
+		log.Println(err.Error())
+		ctx.JSON(http.StatusInternalServerError, gin.H{
+			"error": err.Error(),
+		})
+		return
+	}
+	if len(result) == 0 {
+		ctx.JSON(http.StatusBadRequest, gin.H{
+			"message": "Email is not registered",
+		})
+		return
+	}
+
+	// cek apakah password benar (membandingkan antara password di body dengan yg ada di database)
+	isMatch, err := argon2id.ComparePasswordAndHash(body.Password, result[0].Password)
+	if err != nil {
+		log.Println(err.Error())
+		ctx.JSON(http.StatusInternalServerError, gin.H{
+			"error": err.Error(),
+		})
+		return
+	}
+	if !isMatch {
+		ctx.JSON(http.StatusUnauthorized, gin.H{
+			"error": "Bad Credentials",
+		})
+		return
+	}
+
+	// buat token dari data user
+	payload := pkg.NewPayload(body.Email)
+	token, err := payload.CreateToken()
+	if err!=nil{
+		log.Println(err.Error())
+		ctx.JSON(http.StatusInternalServerError, gin.H{
+			"error": err.Error(),
+		})
+		return
+	}
+
+	// kirim response
+	ctx.JSON(http.StatusOK, gin.H{
+		"message": "Login success",
+		"token": token,
+	})
 }

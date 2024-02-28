@@ -20,5 +20,5 @@ func InitAuthRouter(router *gin.Engine, db *sqlx.DB) {
 	authRouter.POST("/new", authHandler.Register)
 
 	// login router
-	authRouter.POST("")
+	authRouter.POST("", authHandler.Login)
 }
