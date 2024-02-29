@@ -15,10 +15,16 @@ func InitBookRouter(router *gin.Engine, db *sqlx.DB) {
 	bookRepo := repositories.InitBookRepo(db)
 	bookHandler:= handlers.InitBookHandler(bookRepo)
 
-	// create book
-	// localhost:4000/book/new
-	bookRouter.POST("/new", middlewares.CheckToken ,bookHandler.CreateBook)
-
+	// localhost:4000/book
 	// get books
 	bookRouter.GET("", middlewares.CheckToken ,bookHandler.GetBooks)
+	// get book by id
+	bookRouter.GET("/:id", middlewares.CheckToken ,bookHandler.GetBookById)
+	// delete book by id
+	bookRouter.DELETE("/:id", middlewares.CheckToken ,bookHandler.DeleteBookById)
+	// update book by id
+	bookRouter.PATCH("/:id", middlewares.CheckToken ,bookHandler.UpdateBookById)
+	// create book
+	bookRouter.POST("/new", middlewares.CheckToken ,bookHandler.CreateBook)
+
 }
